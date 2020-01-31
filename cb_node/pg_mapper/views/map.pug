@@ -1,0 +1,16 @@
+extends layout
+block content
+    #map
+
+    script.
+        var myData = !{JSON.stringify(jsonData)};
+        console.log(myData);
+        // Create variable to hold map element, give initial settings to map
+        var map = L.map('map',{ center: [47, -1.5], zoom: 10});
+        // Add OpenStreetMap tile layer to map element
+        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+        	attribution: '© OpenStreetMap'
+        }).addTo(map);
+        // Add JSON to map
+        var myLayer = L.geoJson().addTo(map);
+        myLayer.addData(myData);

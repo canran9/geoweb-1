@@ -1,0 +1,77 @@
+body {
+  padding: 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+/** iTowns map example */
+#info {
+    color: black;
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin-left: 15px;
+    padding: 0.3rem;
+    background-color: white;
+    border: 2px solid black;
+    border-radius: 5px;
+}
+
+.centered {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 25rem;
+    border: 2px solid black;
+    padding: 1rem;
+    background: rgba(128, 168, 197, 1);
+    border-radius: 5px;
+    display: none;
+}
+
+#viewerDiv {
+    display: none;
+}
+
+input {
+    margin-top: 1rem;
+    font-size: 1rem;
+}
+
+#url {
+    width: calc(100% - 1rem);
+}
+
+#submit {
+    margin-left: 25%;
+    margin-right: 25%;
+    width: 50%;
+}
+
+/* lopocs result display */
+table {
+    margin-top: 3rem;
+    width: 100%;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 0.3rem;
+    text-align: center;
+}
+tr:nth-child(even) {
+    background-color: #c6cfd5;
+}
+tr:nth-child(odd) {
+    background-color: #9fc0d5;
+}
+#result {
+    display: none;
+}
+@media (max-width: 600px) {
+    #info,
+    .dg {
+        display: none;
+    }
+}

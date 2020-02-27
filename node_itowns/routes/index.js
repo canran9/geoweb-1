@@ -1,5 +1,6 @@
 var express = require('express'); // require Express
 var router = express.Router(); // setup usage of the Express router engine
+var Twig = require("twig");
 
 /* PostgreSQL and PostGIS module and connection setup */
 const { Client, Query } = require('pg')
@@ -13,7 +14,19 @@ var database = "geoweb" // database name
 var conString = "postgres://"+username+":"+password+"@"+host+"/"+database; // Your Database Connection
 
 // Set up your database query to display GeoJSON
-var coffee_query = "SELECT ST_AsGeoJSON(location) FROM landmark";
+var coffee_query = `SELECT row_to_json(fc) FROM ( 
+                        SELECT 'FeatureCollection' As type, array_to_json(array_agg(f)) As features 
+                        FROM (
+                            SELECT 
+                                'Feature' As type, 
+                                ST_AsGeoJSON(ST_Buffer(location,200))::json As geometry, 
+                                row_to_json((id,libelle)) As properties 
+                            FROM landmark As lg
+                        ) As f) 
+                    As fc
+                    `;
+
+//var coffee_query = "SELECT ST_AsGeoJSON(location) FROM landmark";
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -29,8 +42,7 @@ router.get('/data', function (req, res) {
         result.addRow(row);
     });
     query.on("end", function (result) {
-    	console.log(result.rows[0]);
-        res.send(result.rows[0]);
+        res.send(result.rows[0].row_to_json);
         res.end();
     });
 });
@@ -49,9 +61,23 @@ router.get('/map', function(req, res) {
     				JSON.parse(result.rows[0].st_asgeojson),
     				JSON.parse(result.rows[1].st_asgeojson)
 				]; // Save the JSON as variable data
-        console.log(data);
         //res.render('map');
         res.sendFile(path.join(__dirname+'/../views/map.html'));
+    });
+
+});
+
+/* GET the nantes page */
+router.get('/nantes', function(req, res) {
+    var client = new Client(conString); // Setup our Postgres Client
+    client.connect(); // connect to the client
+    var query = client.query(new Query(coffee_query)); // Run our Query
+    query.on("row", function (row, result) {
+        result.addRow(row);
+    });
+    // Pass the result to the map page
+    query.on("end", function (result) {
+        res.render(path.join(__dirname+'/../views/nantes.html.twig'),{data: result.rows[0].row_to_json});
     });
 
 });

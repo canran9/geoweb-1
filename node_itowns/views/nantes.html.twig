@@ -2,80 +2,17 @@
     <head>
         <title>Itowns - Globe + Multipolygon Geojson</title>
         <meta charset="UTF-8">
-        <link rel="stylesheet" type="text/css" href="/stylesheets/example.css">
-        <link rel="stylesheet" type="text/css" href="/stylesheets/LoadingScreen.css">
+        <link rel="stylesheet" type="text/css" href="/itowns/stylesheets/example.css">
+        <link rel="stylesheet" type="text/css" href="/itowns/stylesheets/LoadingScreen.css">
 
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.6/dat.gui.min.js"></script>
     </head>
     <body>
         <div id="viewerDiv" class="viewer"></div>
-        <script src="/javascripts/GUI/GuiTools.js"></script>
-        <script src="/itowns/itowns.js"></script>
-        <script src="/itowns/debug.js"></script>
-        <script type="text/javascript">
-            console.log({{data|json_encode()}});
-            // Define initial camera position
-            // Define initial camera position
-            var placement = {
-                coord: new itowns.Coordinates('EPSG:4326', -1.5534, 47.2173),
-                range: 30000,
-            }
-
-            // `viewerDiv` will contain iTowns' rendering area (`<canvas>`)
-            var viewerDiv = document.getElementById('viewerDiv');
-
-            // Instanciate iTowns GlobeView*
-            var view = new itowns.GlobeView(viewerDiv, placement);
-            var menuGlobe = new GuiTools('menuDiv', view);
-
-            // Add one imagery layer to the scene
-            // This layer is defined in a json file but it could be defined as a plain js
-            // object. See Layer* for more info.
-            itowns.Fetcher.json('/layers/Ortho.json').then(function _(config) {
-                config.source = new itowns.WMTSSource(config.source);
-                var layer = new itowns.ColorLayer('Ortho', config);
-                view.addLayer(layer).then(menuGlobe.addLayerGUI.bind(menuGlobe));
-            });
-
-            // Add two elevation layers.
-            // These will deform iTowns globe geometry to represent terrain elevation.
-            function addElevationLayerFromConfig(config) {
-                config.source = new itowns.WMTSSource(config.source);
-                var layer = new itowns.ElevationLayer(config.id, config);
-                view.addLayer(layer).then(menuGlobe.addLayerGUI.bind(menuGlobe));
-            }
-            itowns.Fetcher.json('/layers/WORLD_DTM.json').then(addElevationLayerFromConfig);
-            itowns.Fetcher.json('/layers/IGN_MNT_HIGHRES.json').then(addElevationLayerFromConfig);
-
-
-            // Add a geometry layer, which will contain the multipolygon to display
-            var marne = new itowns.GeometryLayer('Marne', new itowns.THREE.Group());
-            marne.update = itowns.FeatureProcessing.update;
-            marne.convert = itowns.Feature2Mesh.convert({
-                color: new itowns.THREE.Color(0xbbffbb),
-                extrude: 80 });
-            marne.transparent = true;
-            marne.opacity = 0.7;
-
-            // Use a FileSource to load a single file once
-            marne.source = new itowns.FileSource({
-                url: 'https://raw.githubusercontent.com/iTowns/iTowns2-sample-data/master/multipolygon.geojson',
-                projection: 'EPSG:4326',
-                format: 'application/json',
-                zoom: { min: 10, max: 10 },
-            });
-
-
-            view.addLayer(marne).then(function menu(layer) {
-                var gui = debug.GeometryDebug.createGeometryDebugUI(menuGlobe.gui, view, layer);
-                debug.GeometryDebug.addWireFrameCheckbox(gui, view, layer);
-            });
-			var options = {
-				minDistance: 300,
-				maxDistance: 40000,
-			};
-			new itowns.GlobeControls(view, placement,options);
-        </script>
+        <script src="/itowns/javascripts/GUI/GuiTools.js"></script>
+        <script src="/itowns_module/itowns.js"></script>
+        <script src="/itowns_module/debug.js"></script>
+        <script src="/javascripts/nantes.js"></script>
     </body>
 </html>

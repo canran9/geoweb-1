@@ -4,9 +4,6 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
-
 var app = express();
 
 // view engine setup
@@ -17,11 +14,17 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
 
+// Routes
+var indexRouter = require('./routes/index');
+var apiRouter = require('./routes/api');
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
-app.use('/itowns', express.static(path.join(__dirname, 'node_modules/itowns/dist')));
+app.use('/api', apiRouter);
+
+// Public files
+app.use(express.static(path.join(__dirname, 'public')));
+// iTowns library
+app.use('/itowns_module', express.static(path.join(__dirname, 'node_modules/itowns/dist')));
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -29,7 +32,7 @@ app.use(function(req, res, next) {
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+/**app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
@@ -37,6 +40,6 @@ app.use(function(err, req, res, next) {
   // render the error page
   res.status(err.status || 500);
   res.render('error');
-});
+});*/
 
 module.exports = app;
